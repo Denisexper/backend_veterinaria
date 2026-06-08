@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors"
+import morgan from "morgan";
 import conn from "./db/connection.js";
 import perrosRoutes from "./routes/perros.routes.js";
 import propietariosRoutes from "./routes/propietarios.routes.js";
@@ -7,6 +9,11 @@ import historialRoutes from "./routes/historial.routes.js";
 const app = express();
 
 app.use(express.json());
+
+app.use(cors());
+
+//watch http petitions on console
+app.use(morgan("dev"))
 
 app.use('/api/perros', perrosRoutes);
 app.use('/api/propietarios', propietariosRoutes);
