@@ -16,3 +16,5 @@ const Perros = new Schema({
         type: String,
     }
 })
+
+export const Perros = model('Perros', Perros)
