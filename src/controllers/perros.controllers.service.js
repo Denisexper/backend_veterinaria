@@ -1,82 +1,71 @@
-import { Perros, Perros, Perros, Perros } from "../models/perros.js";
+import { Perros } from "../models/perros.js";
 
 export class PerrosControllers {
 
-    async create (req, res) {
-
+    async create(req, res) {
         try {
-            
-            const {name, race, img} = req.body;
+            const { name, race, age, img, owner } = req.body;
 
-        const NewPerro = await Perros.create(name, race, img)
+            const newPerro = await Perros.create({ name, race, age, img, owner });
 
-        res.status(201).json({
-            msj: "Perro creado",
-            data: NewPerro
-        })
-
+            res.status(201).json({
+                msj: "Perro creado",
+                data: newPerro
+            });
         } catch (error) {
-            
-            console.error(error)
+            console.error(error);
+            res.status(500).json({ msj: "Error al crear perro", data: error.message });
         }
     }
 
-    async getAll (req, res) {
-
+    async getAll(req, res) {
         try {
-            
-            const Perros = await Perros.find();
+            const perros = await Perros.find().populate('owner');
 
             res.status(200).json({
                 msj: "Lista de Perros",
-                data: Perros
-            })
+                data: perros
+            });
         } catch (error) {
-            
-            console.error(error)
+            console.error(error);
+            res.status(500).json({ msj: "Error al obtener perros", data: error.message });
         }
-        
     }
 
-    async update (req, res) {
-
+    async update(req, res) {
         try {
-            
             const { id } = req.params;
+            const { name, race, age, img, owner } = req.body;
 
-            const {name, race, img} = req.body;
-
-            if(!id){
-
-                return res.status(403).json("no se proporciono id")
+            if (!id) {
+                return res.status(403).json({ msj: "no se proporcionó id" });
             }
 
-            const response = await Perros.findByIdAndUpdate(name, race, img, {new: true})
+            const response = await Perros.findByIdAndUpdate(id, { name, race, age, img, owner }, { new: true });
 
             res.status(200).json({
-                msj: "Perros actualizado",
+                msj: "Perro actualizado",
                 data: response
-            })
+            });
         } catch (error) {
-            
-            console.error(error.message)
+            console.error(error.message);
+            res.status(500).json({ msj: "Error al actualizar perro", data: error.message });
         }
     }
 
-    async deletePerro (req, res) {
-        
+    async deletePerro(req, res) {
         try {
-            
             const { id } = req.params;
 
             const response = await Perros.findByIdAndDelete(id);
 
             res.status(200).json({
-                msj: "perro eliminado correctamente"
-            })
+                msj: "Perro eliminado correctamente",
+                data: response
+            });
         } catch (error) {
-            
-            console.error(error.message)
+            console.error(error.message);
+            res.status(500).json({ msj: "Error al eliminar perro", data: error.message });
         }
     }
 }
